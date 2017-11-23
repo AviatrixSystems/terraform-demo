@@ -1,0 +1,4 @@
+terraform.tfstate*
+.terraform/
+avtx.vars
+*output.log
