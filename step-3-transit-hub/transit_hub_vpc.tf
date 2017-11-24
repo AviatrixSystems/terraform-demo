@@ -51,13 +51,15 @@ resource "aws_route" "route_public_net_transit_hub" {
 resource "aviatrix_gateway" "transit_hub" {
     provider = "aviatrix.demo"
     cloud_type = "1"
-    account_name = "${aviatrix_account.controller_demo.account_name}"
+    account_name = "${data.aviatrix_account.controller_demo.account_name}"
     gw_name = "gw-transit-hub"
     vpc_id = "${aws_vpc.transit_hub.id}"
     vpc_reg = "${data.aws_region.current.name}"
     vpc_size = "t2.small"
     vpc_net = "${aws_subnet.public_net_transit_hub.cidr_block}"
     depends_on = [ "aws_vpc.transit_hub",
+        "aws_internet_gateway.igw_transit_hub",
         "aws_subnet.public_net_transit_hub",
-        "aviatrix_account.controller_demo" ]
+        "aws_route.route_public_net_transit_hub",
+        "data.aviatrix_account.controller_demo" ]
 }

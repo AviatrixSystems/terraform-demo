@@ -15,9 +15,9 @@
 #   - create "on prem" vpc and peer transit to it
 #-----------------------------------------------------------------------------
 
-
-
 export TF_LOG= #TRACE
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 # check aws account is configured
 secret_key=$(grep secret_key init.tf | awk '{ print $3 }')
@@ -43,7 +43,7 @@ curl -O https://raw.githubusercontent.com/AviatrixSystems/AWSQuickStart/master/a
 popd
 
 # step 1
-cd step-1-aws-setup/
+cd step-1-controller-service-hub/
 terraform init .
 terraform apply -auto-approve -no-color -parallelism=1 . | tee apply.output.log
 grep "Apply complete" apply.output.log > /dev/null 2>&1
@@ -62,24 +62,43 @@ if [ "$publicIp" == "" ]; then
     echo "Public IP not found"
     exit 1
 fi
-if [ "$privateIp" == "" ]; then
-    echo "Private IP not found"
+
+# wait for controller to be up
+tries=1
+success=0
+while [ $tries -lt 10 -a $success -eq 0 ]; do
+    echo attempt $tries ...
+    output=$(curl -k "https://$publicIp/v1/api?action=login&username=admin&password=$privateIp" 2>/dev/null)
+    if [ $? -eq 0 ]; then
+        echo "    output: $output"
+        echo "$output" | grep "authorized successfully" > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            success=1
+        fi
+    else
+        echo "    output: $output"
+        sleep 10
+    fi
+    tries=$((tries + 1))
+done
+if [ $success -eq 0 ]; then
+    echo "Failed to connect to controller"
     exit 1
 fi
-# build variables file
-echo aviatrix_controller_ip = \"$publicIp\" > avtx.vars
-echo aviatrix_controller_private_ip = \"$privateIp\" >> avtx.vars
 
-# step 2
-cd ../step-2-aviatrix-setup/
-terraform init .
-terraform apply -auto-approve -no-color -parallelism=1 -var-file=../avtx.vars . 2>&1 | tee apply.output.log
-grep "Apply complete" apply.output.log > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    echo Done
-else
-    echo Step 2 apply failed.  see apply.output.log
-    exit 1
-fi
+# step 2 - 5
+STEPS="step-2-aviatrix-init step-2.25-aviatrix-init step-2.5-aviatrix-init step-3-transit-hub step-4-on-premise step-5-spokes"
+for STEP in ${STEPS}; do
+    cd ../${STEP}/
+    terraform init .
+    TF_LOG=TRACE terraform apply -auto-approve -no-color -parallelism=1 . 2>&1 | tee apply.output.log
+    grep "Apply complete" apply.output.log > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo Done
+    else
+        echo Step ${STEP} apply failed.  see apply.output.log
+        exit 1
+    fi
+done
 
-echo Public IP is $publicIp (controller accessible at https://$publicIp)
+echo Complete. Public IP is $publicIp (controller accessible at https://$publicIp)

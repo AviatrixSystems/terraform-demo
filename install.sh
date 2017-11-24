@@ -17,47 +17,73 @@ if [ $? -ne 0 ]; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-# /usr/local owned by local user
-sudo chown ${USER} /usr/local
+export GOPATH=/usr/local/gopath
+if [ ! -d ${GOPATH} ]; then
+    # /usr/local owned by local user
+    sudo chown ${USER} /usr/local
+    mkdir /usr/local/gopath
+fi
 
 # install go
-brew install go
-export GOPATH=/usr/local/gopath
+which go > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    brew install go
+fi
+
+mkdir -p $GOPATH/src/github.com/terraform-providers
 
 # terraform aws provider
-mkdir -p $GOPATH/src/github.com/terraform-providers
-cd $GOPATH/src/github.com/terraform-providers
-git clone https://github.com/terraform-providers/terraform-provider-aws.git
-cd $GOPATH/src/github.com/terraform-providers/terraform-provider-aws
-make build
+if [ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-aws ]; then
+    cd $GOPATH/src/github.com/terraform-providers
+    git clone https://github.com/terraform-providers/terraform-provider-aws.git
+    cd $GOPATH/src/github.com/terraform-providers/terraform-provider-aws
+    make build
+else
+    cd $GOPATH/src/github.com/terraform-providers/terraform-provider-aws
+    git pull
+    make build
+fi
 
 # terraform avtx deps
-cd $GOPATH/src/github.com/
-mkdir ajg
-cd ajg
-git clone https://github.com/ajg/form.git
-cd form
-go install
+if [ ! -d $GOPATH/src/github.com/ajg/form ]; then
+    cd $GOPATH/src/github.com/
+    mkdir ajg
+    cd ajg
+    git clone https://github.com/ajg/form.git
+    cd form
+    go install
+else
+    cd $GOPATH/src/github.com/ajg/form
+    git pull
+    make build
+    
+fi
 
-cd $GOPATH/src/github.com/
-mkdir davecgh/
-cd davecgh
-git clone https://github.com/davecgh/go-spew.git
-cd go-spew/spew
-go install
+if [ ! -d $GOPATH/src/github.com/davecgh/go-spew ]; then
+    cd $GOPATH/src/github.com/
+    mkdir davecgh/
+    cd davecgh
+    git clone https://github.com/davecgh/go-spew.git
+    cd go-spew/spew
+    go install
+fi
 
-cd $GOPATH/src/github.com/
-mkdir -p AviatrixSystems
-cd AviatrixSystems
-git clone https://github.com/AviatrixSystems/go-aviatrix.git
-cd go-aviatrix/goaviatrix
-go install
+if [ ! -d $GOPATH/src/github.com/AviatrixSystems/go-aviatrix ]; then
+    cd $GOPATH/src/github.com/
+    mkdir -p AviatrixSystems
+    cd AviatrixSystems
+    git clone https://github.com/AviatrixSystems/go-aviatrix.git
+    cd go-aviatrix/goaviatrix
+    go install
+fi
 
 # terraform aviatrix provider
-cd $GOPATH/src/github.com/terraform-providers
-git clone https://github.com/AviatrixSystems/terraform-provider-aviatrix.git
-cd terraform-provider-aviatrix
-make 
+if [ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-aviatrix ]; then
+    cd $GOPATH/src/github.com/terraform-providers
+    git clone https://github.com/AviatrixSystems/terraform-provider-aviatrix.git
+    cd terraform-provider-aviatrix
+    make
+fi
 
 # accept license agreement in aws marketplace
 echo Please accept the license agreement before continuing.  Press enter if complete.
