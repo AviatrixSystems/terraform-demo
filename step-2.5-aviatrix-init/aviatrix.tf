@@ -4,6 +4,10 @@ provider "aviatrix" {
     password = "${local.aviatrix_password}"
     controller_ip = "${local.aviatrix_controller_ip}"
 }
+data "aviatrix_caller_identity" "current" {
+    provider = "aviatrix.demo"
+}
+
 /* aviatrix account */
 data "aviatrix_account" "controller_demo" {
     provider = "aviatrix.demo"
@@ -31,3 +35,10 @@ resource "aviatrix_account" "controller_demo" {
         "data.aws_cloudformation_stack.controller_quickstart" ]
 }
 
+/* reset admin password */
+resource "null_resource" "set_admin_password" {
+    provisioner "local-exec" {
+        when = "destroy"
+        command = "curl -v --insecure 'https://${local.aviatrix_controller_ip}/v1/backend1' --data 'action=user_login_management&subaction=change_password&user_name=admin&account_name=admin&old_password=P@ssw0rd!&password=${local.aviatrix_controller_private_ip}&confirm_password=${local.aviatrix_controller_private_ip}&CID=${data.aviatrix_caller_identity.current.cid}' | grep -vi 'Invalid Session'"
+    }
+}

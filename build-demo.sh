@@ -19,13 +19,6 @@ export TF_LOG= #TRACE
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
-# check aws account is configured
-secret_key=$(grep secret_key init.tf | awk '{ print $3 }')
-if [ $secret_key == "ENTER VALUE" ]; then
-    echo 'Set the variables in init.tf before running'
-    exit 1
-fi
-
 # check that the dependencies are installed
 which terraform > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -91,7 +84,7 @@ STEPS="step-2-aviatrix-init step-2.25-aviatrix-init step-2.5-aviatrix-init step-
 for STEP in ${STEPS}; do
     cd ../${STEP}/
     terraform init .
-    TF_LOG=TRACE terraform apply -auto-approve -no-color -parallelism=1 . 2>&1 | tee apply.output.log
+    terraform apply -auto-approve -no-color -parallelism=1 . 2>&1 | tee apply.output.log
     grep "Apply complete" apply.output.log > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo Done
@@ -101,4 +94,4 @@ for STEP in ${STEPS}; do
     fi
 done
 
-echo Complete. Public IP is $publicIp (controller accessible at https://$publicIp)
+echo "Complete. Public IP is $publicIp (controller accessible at https://$publicIp)"
