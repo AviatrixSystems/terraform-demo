@@ -95,9 +95,12 @@ else
     make
 fi
 
+# accept license agreement in aws marketplace
+echo Please accept the license agreement before continuing.  Press enter if complete.
+echo https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
+read
+
+# create licenses
 # create aws account
-# accept aws marketplace terms for aviatrix
-#    - https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
-# create aviatrix license
+# update init.tf
 # create aws iam account
-# create/update init.tf
