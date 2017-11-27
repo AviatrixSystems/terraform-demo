@@ -99,6 +99,9 @@ resource "aviatrix_tunnel" "transit_to_on_premise" {
     provider = "aviatrix.demo"
     vpc_name1 = "gw-transit-hub"
     vpc_name2 = "gw-on-premise"
+    over_aws_peering = "no"
+    peering_hastatus = "disabled"
+    cluster = "no"
     depends_on = [ "aviatrix_gateway.on_premise",
         "data.aviatrix_gateway.transit_hub" ]
 }

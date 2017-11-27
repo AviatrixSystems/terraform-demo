@@ -31,4 +31,7 @@ resource "aviatrix_tunnel" "engineering_to_engineering" {
     provider = "aviatrix.demo"
     vpc_name1 = "${module.engineering-1.spoke_gw_name}"
     vpc_name2 = "${module.engineering-2.spoke_gw_name}"
+    over_aws_peering = "no"
+    peering_hastatus = "disabled"
+    cluster = "no"
 }

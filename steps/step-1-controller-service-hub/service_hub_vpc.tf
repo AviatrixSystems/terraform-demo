@@ -45,14 +45,14 @@ resource "aws_route" "route_public_net_service_hub" {
 /* create a bucket to store quickstart file - TODO: need to automate
    getting latest version of this file */
 resource "aws_s3_bucket" "temporary" {
-    bucket = "demo-tf-temp"
+    bucket = "demo-tf-temp-${lower(local.aws_access_key)}"
     acl = "private"
     tags {
-        Name = "demo-tf-temp"
+        Name = "demo-tf-temp-${lower(local.aws_access_key)}"
     }
 }
 resource "aws_s3_bucket_object" "quickstart" {
-    bucket = "demo-tf-temp"
+    bucket = "demo-tf-temp-${lower(local.aws_access_key)}"
     key = "aviatrix-aws-quickstart.json"
     source = "data/aviatrix-aws-quickstart.json"
     depends_on = [ "aws_s3_bucket.temporary" ]
@@ -67,7 +67,7 @@ resource "aws_key_pair" "demo_key" {
 /* avtx controller, roles, etc (using quick start cloud formation stack) */
 resource "aws_cloudformation_stack" "controller_quickstart" {
     name = "aviatrix-controller"
-    template_url = "https://s3.amazonaws.com/demo-tf-temp/aviatrix-aws-quickstart.json"
+    template_url = "https://s3.amazonaws.com/demo-tf-temp-${lower(local.aws_access_key)}/aviatrix-aws-quickstart.json"
     parameters = {
         VPCParam = "${aws_vpc.service_hub.id}"
         SubnetParam = "${aws_subnet.public_net_service_hub.id}"

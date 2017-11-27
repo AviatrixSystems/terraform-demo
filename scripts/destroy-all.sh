@@ -4,10 +4,11 @@
 #-----------------------------------------------------------------------------
 TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
 STEPS="step-6-engineering step-5-spokes step-4-on-premise step-3-transit-hub step-2.5-aviatrix-init step-2.25-aviatrix-init step-2-aviatrix-init step-1-controller-service-hub"
+VARS=${TOP}/shared/aviatrix-admin-password.tfvars
 for STEP in ${STEPS}; do
     echo "******************* ${STEP} *******************"
     pushd steps/${STEP}
-    terraform destroy -no-color -parallelism=1 -force -var-file=${TOP}/shared/aviatrix-admin-password.tfvars .
+    terraform destroy -no-color -parallelism=1 -force -var-file=${VARS} .
     if [ $? -ne 0 ]; then
         echo Failed to destroy ${STEP}
         popd
