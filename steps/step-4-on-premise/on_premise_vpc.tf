@@ -83,7 +83,7 @@ resource "aviatrix_gateway" "on_premise" {
     cloud_type = "1"
     account_name = "${data.aviatrix_account.controller_demo.account_name}"
     gw_name = "gw-on-premise"
-    vpc_id = "${aws_vpc.on_premise.id}"
+    vpc_id = "${aws_vpc.on_premise.id}~~on_premise"
     vpc_reg = "${local.on_premise_vpc_region}"
     vpc_size = "t2.small"
     vpc_net = "${aws_subnet.public_net_on_premise.cidr_block}"

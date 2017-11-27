@@ -122,6 +122,15 @@ else
     make
 fi
 
+# update the provider
+if [ ! -f ~/.terraformrc ]; then
+    cat <<EOF > ~/.terraformrc
+providers {
+  "aviatrix" = "/usr/local/gopath/bin/terraform-provider-aviatrix"
+}
+EOF
+fi
+
 # accept license agreement in aws marketplace
 echo Please accept the license agreement before continuing.  Press enter if complete.
 echo https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
