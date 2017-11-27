@@ -2,26 +2,32 @@
  * This builds a spoke and related components.
  */
 
+/* CIDR block for the spoke VPC */
 variable "spoke_cidr_block" {
     type = "string"
     default = ""
 }
+/* CIDR block for the public subnet in this spoke VPC */
 variable "spoke_public_net_cidr_block" {
     type = "string"
     default = ""
 }
+/* the name of the spoke (used throughout to name each component) */
 variable "spoke_name" {
     type = "string"
     default = ""
 }
+/* the controller account name to attach the gateway to */
 variable "spoke_controller_account" {
     type = "string"
     default = ""
 }
+/* the region where this vpc and all components will be installed */
 variable "spoke_region" {
     type = "string"
     default = ""
 }
+/* aws credentials */
 variable "aws_access_key" {
     type = "string"
     default = ""
