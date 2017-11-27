@@ -19,6 +19,7 @@ fi
 
 export GOPATH=/usr/local/gopath
 if [ ! -d ${GOPATH} ]; then
+    echo "sudo'ing to chown /usr/local ..."
     # /usr/local owned by local user
     sudo chown ${USER} /usr/local
     mkdir /usr/local/gopath
@@ -55,7 +56,7 @@ if [ ! -d $GOPATH/src/github.com/ajg/form ]; then
 else
     cd $GOPATH/src/github.com/ajg/form
     git pull
-    make build
+    go install
 fi
 
 if [ ! -d $GOPATH/src/github.com/davecgh/go-spew ]; then
@@ -66,9 +67,9 @@ if [ ! -d $GOPATH/src/github.com/davecgh/go-spew ]; then
     cd go-spew/spew
     go install
 else
-    cd $GOPATH/src/github.com/davecgh/go-spew
+    cd $GOPATH/src/github.com/davecgh/go-spew/spew
     git pull
-    make build
+    go install
 fi
 
 if [ ! -d $GOPATH/src/github.com/AviatrixSystems/go-aviatrix ]; then
@@ -79,9 +80,35 @@ if [ ! -d $GOPATH/src/github.com/AviatrixSystems/go-aviatrix ]; then
     cd go-aviatrix/goaviatrix
     go install
 else
-    cd $GOPATH/src/github.com/AviatrixSystems/goaviatrix
+    cd $GOPATH/src/github.com/AviatrixSystems/go-aviatrix/goaviatrix
     git pull
     go install
+fi
+
+if [ ! -d $GOPATH/src/github.com/google/go-querystring ]; then
+    cd $GOPATH/src/github.com
+    mkdir -p google
+    cd google
+    git clone https://github.com/google/go-querystring.git
+    cd go-querystring/query
+    go install
+else
+    cd $GOPATH/src/github.com/google/go-querystring/query
+    git pull
+    go install
+fi
+
+if [ ! -d $GOPATH/src/github.com/hashicorp/terraform ]; then
+    cd $GOPATH/src/github.com
+    mkdir -p hashicorp
+    cd hashicorp
+    git clone https://github.com/hashicorp/terraform.git
+    cd terraform
+    make fmt && make
+else
+    cd $GOPATH/src/github.com/hashicorp/terraform
+    git pull
+    make fmt && make
 fi
 
 # terraform aviatrix provider
