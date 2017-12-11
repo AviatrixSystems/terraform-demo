@@ -85,12 +85,6 @@ resource "aws_s3_bucket_object" "quickstart" {
     depends_on = [ "aws_s3_bucket.temporary" ]
 }
 
-/* key pair */
-data "aws_key_pair" "demo_key" {
-    provider = "aws.services"
-    key_name = "aviatrix-demo"
-}
-
 /* avtx controller, roles, etc (using quick start cloud formation stack) */
 resource "aws_cloudformation_stack" "controller_quickstart" {
     provider = "aws.services"
@@ -105,7 +99,6 @@ resource "aws_cloudformation_stack" "controller_quickstart" {
     }
     capabilities = [ "CAPABILITY_NAMED_IAM" ] /* to allow roles to be created */
     depends_on = [ "aws_vpc.service_hub",
-        "data.aws_key_pair.demo_key",
         "aws_subnet.public_net_service_hub",
         "aws_s3_bucket_object.quickstart" ]
 }
