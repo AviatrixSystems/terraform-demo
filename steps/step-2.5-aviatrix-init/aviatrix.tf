@@ -4,6 +4,18 @@ resource "aviatrix_customer_id" "customer_id" {
     customer_id = "${local.aviatrix_customer_id}"
 }
 
+
+/* aws provider */
+provider "aws" {
+    alias = "demo"
+    region     = "us-west-2"
+    access_key = "${local.aws_access_key}"
+    secret_key = "${local.aws_secret_key}"
+}
+data "aws_caller_identity" "current" {
+    provider = "aws.demo"
+}
+
 /* create aviatrix account to link to AWS */
 resource "aviatrix_account" "controller_demo" {
     provider = "aviatrix.demo"

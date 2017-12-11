@@ -3,7 +3,7 @@
  */
 
 locals {
-    on_premise_vpc_region = "ca-central-1"
+    on_premise_vpc_region = "us-west-1"
 }
 
 provider "aws" {
@@ -23,7 +23,7 @@ data "aviatrix_account" "controller_demo" {
 data "aviatrix_gateway" "transit_hub" {
     provider = "aviatrix.demo"
     account_name = "${data.aviatrix_account.controller_demo.account_name}"
-    gw_name = "gw-transit-hub"
+    gw_name = "${local.gw_name_transit}"
 }
 
 /* AWS vpc, subnet, igw, route table */
@@ -82,7 +82,7 @@ resource "aviatrix_gateway" "on_premise" {
     provider = "aviatrix.demo"
     cloud_type = "1"
     account_name = "${data.aviatrix_account.controller_demo.account_name}"
-    gw_name = "gw-on-premise"
+    gw_name = "${local.gw_name_onprem}"
     vpc_id = "${aws_vpc.on_premise.id}~~on_premise"
     vpc_reg = "${local.on_premise_vpc_region}"
     vpc_size = "t2.small"
@@ -97,8 +97,8 @@ resource "aviatrix_gateway" "on_premise" {
 /* peer transit to on premise */
 resource "aviatrix_tunnel" "transit_to_on_premise" {
     provider = "aviatrix.demo"
-    vpc_name1 = "gw-transit-hub"
-    vpc_name2 = "gw-on-premise"
+    vpc_name1 = "${local.gw_name_transit}"
+    vpc_name2 = "${local.gw_name_onprem}"
     over_aws_peering = "no"
     peering_hastatus = "disabled"
     cluster = "no"

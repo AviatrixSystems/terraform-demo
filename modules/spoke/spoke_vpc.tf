@@ -27,6 +27,11 @@ variable "spoke_region" {
     type = "string"
     default = ""
 }
+/* the name of the gateway where the transit resides */
+variable "gw_name_transit" {
+    type = "string"
+    default = ""
+}
 /* aws credentials */
 variable "aws_access_key" {
     type = "string"
@@ -111,21 +116,10 @@ resource "aviatrix_gateway" "spoke" {
         "aws_route.route_public_net_spoke" ]
 }
 
-/* aviatrix tunnel to service */
+/* aviatrix tunnel to transit */
 resource "aviatrix_tunnel" "spoke_to_transit" {
     provider = "aviatrix.demo"
-    vpc_name1 = "gw-${var.spoke_name}"
-    vpc_name2 = "gw-service-hub"
-    over_aws_peering = "no"
-    peering_hastatus = "disabled"
-    cluster = "no"
-    depends_on = [ "aviatrix_gateway.spoke" ]
-}
-
-/* aviatrix tunnel to transit */
-resource "aviatrix_tunnel" "spoke_to_service" {
-    provider = "aviatrix.demo"
-    vpc_name1 = "gw-transit-hub"
+    vpc_name1 = "${var.gw_name_transit}"
     vpc_name2 = "gw-${var.spoke_name}"
     over_aws_peering = "no"
     peering_hastatus = "disabled"

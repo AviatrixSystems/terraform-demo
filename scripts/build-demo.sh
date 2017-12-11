@@ -37,6 +37,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# grab the password
+PASSWORD=$(grep "aviatrix_password = " ${TOP}/shared/init.tf | awk '{ print $3 }' | sed -e 's/"//g')
+
+
 #-----------------------------------------------------------------------------
 # function waitForControllerUp
 # waits until the controller IP is accessible via a curl request (i.e., a
@@ -68,10 +72,45 @@ function waitForControllerUp() {
         tries=$((tries + 1))
     done
     if [ $success -eq 0 ]; then
-        echo "Unable to connect to controller on https://$publicIp"
+        echo "Unable to connect to controller on https://$publicIp using admin:$password"
         return 2
     fi
     return 0
+}
+
+#-----------------------------------------------------------------------------
+# Applies a single step.
+# Arguments:
+#  $1 - step - step name
+#-----------------------------------------------------------------------------
+function applyStep() {
+    local step="$1"
+
+    echo "******************* ${step} *******************"
+    cd ${TOP}/steps/${step}/
+    mkdir -p ${TOP}/logs
+    LOG=${TOP}/logs/${step}.apply.output.log
+    if [ "${VARS}" != "" ]; then
+        ARGS="-var-file=${VARS}"
+    else
+        ARGS=
+    fi
+
+    terraform apply -auto-approve -no-color -parallelism=1 -var "top_dir=${TOP}" ${ARGS} . 2>&1 | tee ${LOG}
+    grep "Apply complete" ${LOG} > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        if [ "${VARS}" != "" ]; then
+            grep "subaction=change_password" ${TOP}/steps/${step}/*.tf > /dev/null 2>&1
+            if [ $? -eq 0 ]; then # password changed in this step
+                echo "aviatrix_current_password = \"$PASSWORD\"" > ${VARS}
+            fi
+        fi
+        echo Done
+        return 0
+    else
+        echo Step ${step} apply failed.  See ${LOG}.
+        return 1
+    fi
 }
 
 # init/validate all steps
@@ -86,16 +125,11 @@ mkdir -p ${TOP}/data
 curl -o ${TOP}/data/aviatrix-aws-quickstart.json https://raw.githubusercontent.com/AviatrixSystems/AWSQuickStart/master/aviatrix-aws-quickstart.json 2>/dev/null
 
 # step 1
-STEP=step-1-controller-service-hub
-LOG=${TOP}/logs/${STEP}.apply.output.log
-cd ${TOP}/steps/${STEP}/
-terraform apply -auto-approve -no-color -parallelism=1 . | tee ${LOG}
-grep "Apply complete" ${LOG} > /dev/null 2>&1
+applyStep step-1-controller-service-hub
 if [ $? -eq 0 ]; then
     privateIp=$(grep "private-ip" ${LOG} | awk '{ print $3 }')
     publicIp=$(grep "public-ip" ${LOG} | awk '{ print $3 }')
 else
-    echo Step ${STEP} failed.  See ${LOG}.
     exit 1
 fi
 if [ "$publicIp" == "" ]; then
@@ -105,34 +139,29 @@ fi
 
 # wait for the controller to be accessible
 waitForControllerUp "$publicIp" "$privateIp"
-if [ $? -ne 0 ]; then exit 2; fi
+rtn=$?
+if [ $rtn -eq 2 ]; then
+    waitForControllerUp "$publicIp" "$PASSWORD"
+    rtn=$?
+    current_password="$PASSWORD"
+else
+    current_password="$privateIp"
+fi
+if [ $rtn -ne 0 ]; then exit 2; fi
 
 # create a temporary .tfvars file to store the current admin password
 # (update this after step 2.25 when it is set)
 VARS=${TOP}/shared/aviatrix-admin-password.tfvars
-echo "aviatrix_current_password = \"$privateIp\"" > ${VARS}
-
-# grab the password
-PASSWORD=$(grep "aviatrix_password = " ${TOP}/shared/init.tf | awk '{ print $3 }')
+echo "aviatrix_current_password = \"$current_password\"" > ${VARS}
 
 # step 2 - 5
 STEPS="step-2-aviatrix-init step-2.25-aviatrix-init step-2.5-aviatrix-init step-3-transit-hub step-4-on-premise step-5-spokes"
 for STEP in ${STEPS}; do
-    echo "******************* ${STEP} *******************"
-    cd ${TOP}/steps/${STEP}/
-    LOG=${TOP}/logs/${STEP}.apply.output.log
-    terraform apply -auto-approve -no-color -parallelism=1 -var-file=${VARS} . 2>&1 | tee ${LOG}
-    grep "Apply complete" ${LOG} > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        grep "subaction=change_password" ${TOP}/steps/${STEP}/*.tf > /dev/null 2>&1
-        if [ $? -eq 0 ]; then # password changed in this step
-            echo "aviatrix_current_password = $PASSWORD" > ${VARS}
-        fi
-        echo Done
-    else
-        echo Step ${STEP} apply failed.  See ${LOG}.
+    applyStep ${STEP}
+    if [ $? -ne 0 ]; then
         exit 1
     fi
 done
 
-echo "Complete. Public IP is $publicIp.  Controller accessible at https://$publicIp.  Login as admin with password '${PASSWORD}'."
+current_password=$(grep "aviatrix_current_password = " ${VARS} | awk '{ print $3 }' | sed -e 's/"//g')
+echo "Complete. Public IP is $publicIp.  Controller accessible at https://$publicIp.  Login as admin with password '${current_password}'."
