@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #-----------------------------------------------------------------------------
 # Installation script for Aviatrix terraform based demo
 # This script installs the Ubuntu/Debian packages required for this demo

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #-----------------------------------------------------------------------------
 # Installs the golang prerequisites for the terraform-based demo.
 # This should be sourced from one of the other install-prereq-* scripts.

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #-----------------------------------------------------------------------------
 # Build Aviatrix demo environment in multiple steps.
 #
