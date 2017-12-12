@@ -119,13 +119,23 @@ resource "aviatrix_gateway" "spoke" {
 /* aviatrix tunnel to transit */
 resource "aviatrix_tunnel" "spoke_to_transit" {
     provider = "aviatrix.demo"
-    vpc_name1 = "${var.gw_name_transit}"
-    vpc_name2 = "gw-${var.spoke_name}"
+    vpc_name1 = "gw-${var.spoke_name}"
+    vpc_name2 = "${var.gw_name_transit}"
     over_aws_peering = "no"
     peering_hastatus = "disabled"
     cluster = "no"
     depends_on = [ "aviatrix_gateway.spoke" ]
 }
+
+/* aviatrix spoke to onprem through transit */
+resource "aviatrix_transpeer" "spoke_to_onprem" {
+    provider = "aviatrix.demo"
+    source = "gw-${var.spoke_name}"
+    nexthop = "${var.gw_name_transit}"
+    reachable_cidr = "10.0.0.0/16"
+    depends_on = [ "aviatrix_tunnel.spoke_to_transit" ]
+}
+
 
 output "spoke_vpc_id" {
     value = "${aws_vpc.spoke.id}"
