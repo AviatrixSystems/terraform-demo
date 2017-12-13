@@ -80,6 +80,7 @@ resource "aws_route53_record" "runner" {
 
 resource "null_resource" "ssh_and_prep" {
     provisioner "local-exec" {
-        command = "ssh -o StrictHostKeyChecking=no -i ~/Downloads/aviatrix-demo.pem ${aws_eip.runner.public_i} -c 'git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh'"
+        command = "ssh -o StrictHostKeyChecking=no -i ~/Downloads/aviatrix-demo.pem ubuntu@${aws_eip.runner.public_ip} 'git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh'"
     }
+    depends_on = [ "aws_instance.runner" ]
 }
