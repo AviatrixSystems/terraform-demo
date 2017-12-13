@@ -127,6 +127,14 @@ resource "aviatrix_tunnel" "spoke_to_transit" {
     depends_on = [ "aviatrix_gateway.spoke" ]
 }
 
+// TODO: FIXME
+resource "null_resource" "sleep" {
+    provisioner "local-exec" {
+        command = "sleep 20"
+    }
+    depends_on = [ "aviatrix_tunnel.spoke_to_transit" ]
+}
+
 /* aviatrix spoke to onprem through transit */
 resource "aviatrix_transpeer" "spoke_to_onprem" {
     provider = "aviatrix.demo"
