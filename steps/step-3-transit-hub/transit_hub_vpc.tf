@@ -6,7 +6,7 @@
 /* aws provider */
 provider "aws" {
     alias = "transit"
-    region     = "us-west-2"
+    region     = "${local.region_name_transit}"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }

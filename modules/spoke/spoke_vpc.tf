@@ -144,3 +144,11 @@ output "spoke_vpc_id" {
 output "spoke_gw_name" {
     value = "gw-${var.spoke_name}"
 }
+
+output "spoke_region_name" {
+    value = "${var.spoke_region}"
+}
+
+output "spoke_name" {
+    value = "${var.spoke_name}"
+}

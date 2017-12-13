@@ -2,13 +2,9 @@
  * This builds the on_premise hub VPC and related components.
  */
 
-locals {
-    on_premise_vpc_region = "us-west-1"
-}
-
 provider "aws" {
     alias      = "onprem"
-    region     = "${local.on_premise_vpc_region}"
+    region     = "${local.region_name_transit}"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }
@@ -84,7 +80,7 @@ resource "aviatrix_gateway" "on_premise" {
     account_name = "${data.aviatrix_account.controller_demo.account_name}"
     gw_name = "${local.gw_name_onprem}"
     vpc_id = "${aws_vpc.on_premise.id}~~on_premise"
-    vpc_reg = "${local.on_premise_vpc_region}"
+    vpc_reg = "${local.region_name_onprem}"
     vpc_size = "t2.small"
     vpc_net = "${aws_subnet.public_net_on_premise.cidr_block}"
     depends_on = [ "aws_vpc.on_premise",

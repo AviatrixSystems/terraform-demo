@@ -43,6 +43,7 @@ resource "aws_security_group" "runner" {
         }
     ]
 }
+// TODO : remove hard-coded ami id
 resource "aws_instance" "runner" {
     provider = "aws.setup"
     ami = "ami-0def3275"
@@ -67,7 +68,7 @@ resource "aws_eip" "runner" {
 
 resource "aws_route53_record" "runner" {
     provider = "aws.route53"
-    name = "${local.username}.demo"
+    name = "demo.${local.username}"
     type = "A"
     ttl = 300
     zone_id = "${data.aws_route53_zone.aviatrix_live.zone_id}"

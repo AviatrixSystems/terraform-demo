@@ -9,12 +9,15 @@ locals {
     gw_name_transit = "gw-transit-hub"
     gw_name_onprem = "gw-on-premise"
     vpc_name_transit = "transit_hub"
+    vpc_name_onprem = "on_premise"
+    region_name_transit = "ca-central-1"
+    region_name_onprem = "us-west-1"
 }
 
 /* aws provider (services vpc) */
 provider "aws" {
     alias = "services"
-    region     = "ca-central-1"
+    region     = "${local.region_name_transit}"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }
