@@ -12,12 +12,15 @@ if [ ! -d ${GOPATH} ]; then
 fi
 
 # go - terraform
+echo Building terraform provider ...
 go get github.com/hashicorp/terraform
 
 # go - terraform aws provider
+echo Building AWS provider ...
 go get github.com/terraform-providers/terraform-provider-aws
 
 # go - terraform avtx deps
+echo Building Aviatrix provider ...
 go get github.com/ajg/form
 go get github.com/davecgh/go-spew/spew
 go get github.com/AviatrixSystems/go-aviatrix/goaviatrix

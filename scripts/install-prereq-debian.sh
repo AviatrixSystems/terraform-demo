@@ -13,13 +13,13 @@ sudo apt-get update
 which terraform > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     sudo apt install -y unzip wget
-    if [ $? -ne 0 ]; then; exit 1; fi
+    if [ $? -ne 0 ]; then exit 1; fi
     wget https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip
-    if [ $? -ne 0 ]; then; exit 1; fi
+    if [ $? -ne 0 ]; then exit 1; fi
     unzip terraform_0.11.1_linux_amd64.zip
-    if [ $? -ne 0 ]; then; exit 1; fi
+    if [ $? -ne 0 ]; then exit 1; fi
     sudo mv terraform /usr/local/bin/
-    if [ $? -ne 0 ]; then; exit 1; fi
+    if [ $? -ne 0 ]; then exit 1; fi
     sudo ln -s /usr/local/bin/terraform /usr/bin/terraform
 fi
 
@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
     tar -xvf go1.9.2.linux-amd64.tar.gz
     sudo mkdir -p /usr/local/go
     sudo mv ./go /usr/local/go/go-1.9.2
-    sudo rm /usr/local/go/current
+    sudo rm -f /usr/local/go/current
     sudo ln -sf /usr/local/go/go-1.9.2 /usr/local/go/current
     sudo chown -R root:root /usr/local/go/go-1.9.2
     sudo ln -sf /usr/local/go/current/bin/godoc /usr/bin/godoc

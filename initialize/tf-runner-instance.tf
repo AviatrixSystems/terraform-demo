@@ -75,6 +75,11 @@ resource "aws_route53_record" "runner" {
     records = [ "${aws_eip.runner.public_ip}" ]
     depends_on = [ "data.aws_route53_zone.aviatrix_live",
         "aws_eip.runner",
-        "aws_instance.runner" ]
-    
+        "aws_instance.runner" ]    
+}
+
+resource "null_resource" "ssh_and_prep" {
+    provisioner "local-exec" {
+        command = "ssh -o StrictHostKeyChecking=no -i ~/Downloads/aviatrix-demo.pem ${aws_eip.runner.public_i} -c 'git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh'"
+    }
 }
