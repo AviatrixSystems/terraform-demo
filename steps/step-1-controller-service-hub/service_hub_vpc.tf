@@ -6,7 +6,7 @@ variable "top_dir" {
 /* aws provider */
 provider "aws" {
     alias = "services"
-    region     = "${local.region_name_services}"
+    region     = "ca-central-1"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }
