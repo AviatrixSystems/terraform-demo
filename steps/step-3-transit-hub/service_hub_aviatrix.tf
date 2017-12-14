@@ -34,7 +34,7 @@ resource "aviatrix_gateway" "services_hub" {
     vpc_size = "t2.small"
     vpc_net = "${data.aws_subnet.public_net_service_hub.cidr_block}"
     depends_on = [ "data.aws_vpc.service_hub",
-        "data.aws_region.current",
+        "data.aws_region.services",
         "data.aws_subnet.public_net_service_hub",
         "data.aviatrix_account.controller_demo" ]
 }
