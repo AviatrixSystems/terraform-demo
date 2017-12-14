@@ -82,7 +82,7 @@ resource "aviatrix_gateway" "on_premise" {
     vpc_id = "${aws_vpc.on_premise.id}~~on_premise"
     vpc_reg = "${local.region_name_onprem}"
     vpc_size = "t2.small"
-    vpc_net = "${aws_subnet.public_net_on_premise.cidr_block}"
+    vpc_net = "${aws_subnet.public_net_on_premise.cidr_block}~~${local.region_name_onprem}~~public_net_on_premise"
     depends_on = [ "aws_vpc.on_premise",
         "aws_internet_gateway.igw_on_premise",
         "aws_subnet.public_net_on_premise",

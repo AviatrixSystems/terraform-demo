@@ -10,7 +10,7 @@ locals {
     gw_name_onprem = "gw-on-premise"
     vpc_name_transit = "transit_hub"
     vpc_name_onprem = "on_premise"
-    region_name_transit = "ca-central-1"
+    region_name_transit = "us-west-2"
     region_name_onprem = "us-west-1"
 }
 
