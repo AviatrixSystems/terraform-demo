@@ -32,7 +32,7 @@ resource "aviatrix_gateway" "services_hub" {
     vpc_id = "${data.aws_vpc.service_hub.id}~~service_hub"
     vpc_reg = "${data.aws_region.services.name}"
     vpc_size = "t2.small"
-    vpc_net = "${data.aws_subnet.public_net_service_hub.cidr_block}"
+    vpc_net = "${data.aws_subnet.public_net_service_hub.cidr_block}~~${data.aws_region.services.name}~~public_net_service_hub"
     depends_on = [ "data.aws_vpc.service_hub",
         "data.aws_region.services",
         "data.aws_subnet.public_net_service_hub",

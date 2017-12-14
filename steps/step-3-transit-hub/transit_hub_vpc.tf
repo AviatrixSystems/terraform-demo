@@ -71,7 +71,7 @@ resource "aviatrix_gateway" "transit_hub" {
     vpc_id = "${aws_vpc.transit_hub.id}~~transit_hub"
     vpc_reg = "${local.region_name_transit}"
     vpc_size = "t2.small"
-    vpc_net = "${aws_subnet.public_net_transit_hub.cidr_block}"
+    vpc_net = "${aws_subnet.public_net_transit_hub.cidr_block}~~${local.region_name_transit}~~public_net_transit_hub"
     depends_on = [ "aws_vpc.transit_hub",
         "aws_internet_gateway.igw_transit_hub",
         "aws_subnet.public_net_transit_hub",

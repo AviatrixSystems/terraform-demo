@@ -109,7 +109,7 @@ resource "aviatrix_gateway" "spoke" {
     vpc_id = "${aws_vpc.spoke.id}~~${var.spoke_name}"
     vpc_reg = "${var.spoke_region}"
     vpc_size = "t2.small"
-    vpc_net = "${var.spoke_public_net_cidr_block}"
+    vpc_net = "${var.spoke_public_net_cidr_block}~~${var.spoke_region}~~public_net_${var.spoke_name}"
     depends_on = [ "aws_vpc.spoke",
         "aws_subnet.public_net_spoke",
         "aws_internet_gateway.igw_spoke",

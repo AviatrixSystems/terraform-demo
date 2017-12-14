@@ -52,9 +52,9 @@ data "aws_subnet" "spoke_vpc_subnet" {
 // TODO: remove hard coded ami id
 resource "aws_instance" "debug_in_spoke" {
     provider = "aws.spoke"
-    ami = "ami-d29e25b6"
+    ami = "ami-55ef662f"
     instance_type = "t2.micro"
-    key_name = "aviatrix-demo"
+    key_name = "${module.spoke-1.spoke_gw_name}"
     subnet_id = "${data.aws_subnet.spoke_vpc_subnet.id}"
     tags {
         "Name" = "Troubleshooting instance 1"
@@ -66,7 +66,7 @@ resource "aws_instance" "debug_in_onprem" {
     provider = "aws.onprem"
     ami = "ami-a51f27c5"
     instance_type = "t2.micro"
-    key_name = "aviatrix-demo"
+    key_name = "${local.gw_name_onprem}"
     subnet_id = "${data.aws_subnet.onprem_vpc_subnet.id}"
     tags {
         "Name" = "Troubleshooting instance 2"
