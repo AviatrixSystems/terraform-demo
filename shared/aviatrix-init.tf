@@ -12,12 +12,13 @@ locals {
     vpc_name_onprem = "on_premise"
     region_name_transit = "us-west-2"
     region_name_onprem = "us-west-1"
+    region_name_services = "ca-central-1"
 }
 
 /* aws provider (services vpc) */
 provider "aws" {
     alias = "services"
-    region     = "${local.region_name_transit}"
+    region     = "${local.region_name_services}"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }
