@@ -11,13 +11,6 @@ provider "aws" {
     secret_key = "${local.aws_secret_key}"
 }
 
-/* aws top level */
-data "aws_region" "current" {
-    provider = "aws.transit"
-    current = true
-}
-
-
 /* AWS vpc, subnet, igw, route table */
 resource "aws_vpc" "transit_hub" {
     provider = "aws.transit"
@@ -76,7 +69,7 @@ resource "aviatrix_gateway" "transit_hub" {
     account_name = "${data.aviatrix_account.controller_demo.account_name}"
     gw_name = "${local.gw_name_transit}"
     vpc_id = "${aws_vpc.transit_hub.id}~~transit_hub"
-    vpc_reg = "${data.aws_region.current.name}"
+    vpc_reg = "${local.region_name_transit}"
     vpc_size = "t2.small"
     vpc_net = "${aws_subnet.public_net_transit_hub.cidr_block}"
     depends_on = [ "aws_vpc.transit_hub",

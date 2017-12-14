@@ -4,7 +4,7 @@
 
 provider "aws" {
     alias      = "onprem"
-    region     = "${local.region_name_transit}"
+    region     = "${local.region_name_onprem}"
     access_key = "${local.aws_access_key}"
     secret_key = "${local.aws_secret_key}"
 }
