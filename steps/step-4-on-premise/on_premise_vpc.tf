@@ -50,7 +50,7 @@ resource "aws_internet_gateway" "igw_on_premise" {
     depends_on = [ "aws_vpc.on_premise" ]
 }
 
-resource "aws_route_table" "rt_public_net_on_premise" {
+data "aws_route_table" "rt_public_net_on_premise" {
     provider = "aws.onprem"
     vpc_id = "${aws_vpc.on_premise.id}"
     depends_on = [ "aws_vpc.on_premise" ]
