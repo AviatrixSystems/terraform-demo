@@ -165,3 +165,4 @@ done
 
 current_password=$(grep "aviatrix_current_password = " ${VARS} | awk '{ print $3 }' | sed -e 's/"//g')
 echo "Complete. Public IP is $publicIp.  Controller accessible at https://$publicIp.  Login as admin with password '${current_password}'."
+touch ${LOG}/demo.running

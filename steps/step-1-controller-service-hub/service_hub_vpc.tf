@@ -44,7 +44,7 @@ resource "aws_internet_gateway" "igw_service_hub" {
     depends_on = [ "aws_vpc.service_hub" ]
 }
 
-resource "aws_route_table" "rt_public_net_service_hub" {
+data "aws_route_table" "rt_public_net_service_hub" {
     provider = "aws.services"
     depends_on = [ "aws_vpc.service_hub" ]
     vpc_id = "${aws_vpc.service_hub.id}"
@@ -53,17 +53,17 @@ resource "aws_route_table" "rt_public_net_service_hub" {
 resource "aws_route_table_association" "service_hub_rt_to_public_subnet" {
     provider = "aws.services"
     subnet_id = "${aws_subnet.public_net_service_hub.id}"
-    route_table_id = "${aws_route_table.rt_public_net_service_hub.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_service_hub.id}"
     depends_on = [ "aws_subnet.public_net_service_hub",
-        "aws_route_table.rt_public_net_service_hub" ]
+        "data.aws_route_table.rt_public_net_service_hub" ]
 }
 
 resource "aws_route" "route_public_net_service_hub" {
     provider = "aws.services"
-    route_table_id = "${aws_route_table.rt_public_net_service_hub.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_service_hub.id}"
     gateway_id = "${aws_internet_gateway.igw_service_hub.id}"
     depends_on = [ "aws_internet_gateway.igw_service_hub",
-        "aws_route_table.rt_public_net_service_hub" ]
+        "data.aws_route_table.rt_public_net_service_hub" ]
     destination_cidr_block = "0.0.0.0/0"
 }
 

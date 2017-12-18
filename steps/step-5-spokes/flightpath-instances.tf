@@ -26,6 +26,20 @@ data "aws_vpc" "transit" {
     }
 }
 
+data "aws_subnet" "transit_vpc_subnet" {
+    provider = "aws.transit"
+    vpc_id = "${data.aws_vpc.transit.id}"
+    tags {
+        "Name" = "public_net_transit_hub"
+    }
+}
+
+
+data "aws_route_table" "transit" {
+    provider = "aws.transit"
+    subnet_id = "${data.aws_subnet.transit_vpc_subnet.id}"
+}
+
 data "aws_vpc" "onprem" {
     provider = "aws.onprem"
     tags {
@@ -40,6 +54,7 @@ data "aws_subnet" "onprem_vpc_subnet" {
         "Name" = "public_net_on_premise"
     }
 }
+
 
 data "aws_subnet" "spoke_vpc_subnet" {
     provider = "aws.spoke"
@@ -57,7 +72,7 @@ resource "aws_instance" "debug_in_spoke" {
     key_name = "${module.spoke-1.spoke_gw_name}"
     subnet_id = "${data.aws_subnet.spoke_vpc_subnet.id}"
     tags {
-        "Name" = "Troubleshooting instance 1"
+        "Name" = "webapp-1"
     }
     depends_on = [ "data.aws_subnet.spoke_vpc_subnet" ]
 }
@@ -69,7 +84,13 @@ resource "aws_instance" "debug_in_onprem" {
     key_name = "${local.gw_name_onprem}"
     subnet_id = "${data.aws_subnet.onprem_vpc_subnet.id}"
     tags {
-        "Name" = "Troubleshooting instance 2"
+        "Name" = "db-1-onprem"
     }
     depends_on = [ "data.aws_subnet.onprem_vpc_subnet" ]
+}
+
+resource "null_resource" "delete_route_for_debugging" {
+    provisioner "local-exec" {
+        command = "export AWS_ACCESS_KEY_ID=${local.aws_access_key}; export AWS_SECRET_ACCESS_KEY=${local.aws_secret_key}; aws --region ${local.region_name_transit} ec2 delete-route --destination-cidr-block 10.0.0.0/16 --route-table-id ${data.aws_route_table.transit.id}"
+    }
 }

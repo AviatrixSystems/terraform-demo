@@ -39,7 +39,7 @@ resource "aws_internet_gateway" "igw_transit_hub" {
     depends_on = [ "aws_vpc.transit_hub" ]
 }
 
-resource "aws_route_table" "rt_public_net_transit_hub" {
+data "aws_route_table" "rt_public_net_transit_hub" {
     provider = "aws.transit"
     depends_on = [ "aws_vpc.transit_hub" ]
     vpc_id = "${aws_vpc.transit_hub.id}"
@@ -48,17 +48,17 @@ resource "aws_route_table" "rt_public_net_transit_hub" {
 resource "aws_route_table_association" "transit_hub_rt_to_public_subnet" {
     provider = "aws.transit"
     subnet_id = "${aws_subnet.public_net_transit_hub.id}"
-    route_table_id = "${aws_route_table.rt_public_net_transit_hub.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_transit_hub.id}"
     depends_on = [ "aws_subnet.public_net_transit_hub",
-        "aws_route_table.rt_public_net_transit_hub" ]
+        "data.aws_route_table.rt_public_net_transit_hub" ]
 }
 
 resource "aws_route" "route_public_net_transit_hub" {
     provider = "aws.transit"
-    route_table_id = "${aws_route_table.rt_public_net_transit_hub.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_transit_hub.id}"
     gateway_id = "${aws_internet_gateway.igw_transit_hub.id}"
     depends_on = [ "aws_internet_gateway.igw_transit_hub",
-        "aws_route_table.rt_public_net_transit_hub" ]
+        "data.aws_route_table.rt_public_net_transit_hub" ]
     destination_cidr_block = "0.0.0.0/0"
 }
 

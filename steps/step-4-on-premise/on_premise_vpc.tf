@@ -59,18 +59,18 @@ resource "aws_route_table" "rt_public_net_on_premise" {
 resource "aws_route_table_association" "on_premise_rt_to_public_subnet" {
     provider = "aws.onprem"
     subnet_id = "${aws_subnet.public_net_on_premise.id}"
-    route_table_id = "${aws_route_table.rt_public_net_on_premise.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_on_premise.id}"
     depends_on = [ "aws_subnet.public_net_on_premise",
-        "aws_route_table.rt_public_net_on_premise" ]
+        "data.aws_route_table.rt_public_net_on_premise" ]
 }
 
 resource "aws_route" "route_public_net_on_premise" {
     provider = "aws.onprem"
-    route_table_id = "${aws_route_table.rt_public_net_on_premise.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_on_premise.id}"
     gateway_id = "${aws_internet_gateway.igw_on_premise.id}"
     destination_cidr_block = "0.0.0.0/0"
     depends_on = [ "aws_internet_gateway.igw_on_premise",
-        "aws_route_table.rt_public_net_on_premise" ]
+        "data.aws_route_table.rt_public_net_on_premise" ]
 }
 
 /* aviatrix gateway: on_premise */

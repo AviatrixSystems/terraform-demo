@@ -77,7 +77,7 @@ resource "aws_internet_gateway" "igw_spoke" {
     depends_on = [ "aws_vpc.spoke" ]
 }
 
-resource "aws_route_table" "rt_public_net_spoke" {
+data "aws_route_table" "rt_public_net_spoke" {
     provider = "aws.spoke"
     depends_on = [ "aws_vpc.spoke" ]
     vpc_id = "${aws_vpc.spoke.id}"
@@ -86,17 +86,17 @@ resource "aws_route_table" "rt_public_net_spoke" {
 resource "aws_route_table_association" "spoke_rt_to_public_subnet" {
     provider = "aws.spoke"
     subnet_id = "${aws_subnet.public_net_spoke.id}"
-    route_table_id = "${aws_route_table.rt_public_net_spoke.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_spoke.id}"
     depends_on = [ "aws_subnet.public_net_spoke",
-        "aws_route_table.rt_public_net_spoke" ]
+        "data.aws_route_table.rt_public_net_spoke" ]
 }
 
 resource "aws_route" "route_public_net_spoke" {
     provider = "aws.spoke"
-    route_table_id = "${aws_route_table.rt_public_net_spoke.id}"
+    route_table_id = "${data.aws_route_table.rt_public_net_spoke.id}"
     gateway_id = "${aws_internet_gateway.igw_spoke.id}"
     depends_on = [ "aws_internet_gateway.igw_spoke",
-        "aws_route_table.rt_public_net_spoke" ]
+        "data.aws_route_table.rt_public_net_spoke" ]
     destination_cidr_block = "0.0.0.0/0"
 }
 
@@ -159,4 +159,8 @@ output "spoke_region_name" {
 
 output "spoke_name" {
     value = "${var.spoke_name}"
+}
+
+output "spoke_route_table_id" {
+    value = "${data.aws_route_table.rt_public_net_spoke.id}"
 }
