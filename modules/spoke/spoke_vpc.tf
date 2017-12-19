@@ -127,10 +127,12 @@ resource "aviatrix_tunnel" "spoke_to_transit" {
     depends_on = [ "aviatrix_gateway.spoke" ]
 }
 
-// TODO: FIXME
+// TODO: FIXME - wait for gateway to be up before trying to create the
+// transitive peer; without this you will get an error that the gateway does
+// not exist
 resource "null_resource" "sleep" {
     provisioner "local-exec" {
-        command = "sleep 20"
+        command = "sleep 30"
     }
     depends_on = [ "aviatrix_tunnel.spoke_to_transit" ]
 }

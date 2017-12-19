@@ -8,6 +8,7 @@ VARS=${TOP}/shared/aviatrix-admin-password.tfvars
 for STEP in ${STEPS}; do
     echo "******************* ${STEP} *******************"
     pushd steps/${STEP}
+    terraform init .
     terraform destroy -no-color -parallelism=1 -force -var-file=${VARS} .
     if [ $? -ne 0 ]; then
         echo Failed to destroy ${STEP}

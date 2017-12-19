@@ -43,5 +43,5 @@ providers {
 EOF
 fi
 
-sudo echo GOROOT=$GOROOT | sudo tee /etc/profile.d/300-aviatrix-demo.sh
-sudo echo GOPATH=$GOPATH | sudo tee -a /etc/profile.d/300-aviatrix-demo.sh
+#sudo echo GOROOT=$GOROOT | sudo tee /etc/profile.d/300-aviatrix-demo.sh
+sudo echo GOPATH=$GOPATH | sudo tee /etc/profile.d/300-aviatrix-demo.sh
