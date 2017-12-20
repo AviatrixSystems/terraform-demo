@@ -5,6 +5,10 @@ provider "aws" {
     secret_key = "${local.aws_secret_key}"
 }
 
+variable "username" {
+    type = "string"
+}
+
 /* key pair */
 resource "aws_key_pair" "demo_key" {
     provider = "aws.setup"
@@ -80,7 +84,7 @@ resource "aws_route53_record" "runner" {
 
 resource "null_resource" "ssh_and_prep" {
     provisioner "local-exec" {
-        command = "ssh -o StrictHostKeyChecking=no -i ~/Downloads/aviatrix-demo.pem ubuntu@${aws_eip.runner.public_ip} 'sudo apt install python-pip && sudo pip install awscli && git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh'"
+        command = "ssh -o StrictHostKeyChecking=no -i ~/Downloads/aviatrix-demo.pem ubuntu@${aws_eip.runner.public_ip} 'git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh ${var.username}'"
     }
     depends_on = [ "aws_instance.runner" ]
 }

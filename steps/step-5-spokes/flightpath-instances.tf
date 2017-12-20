@@ -77,6 +77,55 @@ resource "aws_instance" "debug_in_spoke" {
     depends_on = [ "data.aws_subnet.spoke_vpc_subnet" ]
 }
 
+resource "aws_security_group" "for_web" {
+    provider = "aws.onprem"
+    name        = "web_application_servers"
+    description = "Allow web application servers to talk to database"
+    vpc_id      = "${data.aws_vpc.onprem.id}"
+
+    ingress {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port   = 443
+        to_port     = 443
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        from_port       = 0
+        to_port         = 0
+        protocol        = "-1"
+        cidr_blocks     = ["0.0.0.0/0"]
+    }
+}
+
+resource "aws_security_group" "for_db" {
+    provider = "aws.onprem"
+    name        = "database_servers"
+    description = "Allow web application servers to talk to database"
+    vpc_id      = "${data.aws_vpc.onprem.id}"
+
+    ingress {
+        from_port   = 3306
+        to_port     = 3306
+        protocol    = "tcp"
+        cidr_blocks = ["192.168.0.0/16"]
+    }
+
+    egress {
+        from_port       = 0
+        to_port         = 0
+        protocol        = "-1"
+        cidr_blocks     = ["0.0.0.0/0"]
+    }
+}
+
 resource "aws_instance" "debug_in_onprem" {
     provider = "aws.onprem"
     ami = "ami-a51f27c5"
@@ -87,6 +136,7 @@ resource "aws_instance" "debug_in_onprem" {
         "Name" = "db-1-onprem"
     }
     depends_on = [ "data.aws_subnet.onprem_vpc_subnet" ]
+    vpc_security_group_ids = [ "${aws_security_group.for_db.id}" ]
 }
 
 resource "null_resource" "delete_route_for_debugging" {

@@ -3,11 +3,21 @@
 # Installation script for Aviatrix terraform based demo
 # This script installs the Ubuntu/Debian packages required for this demo
 # including terraform and golang.
+# Arguments:
+#   $1 - username - the username this is being installed on behalf of
 #-----------------------------------------------------------------------------
 
 TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
 
+AVTX_USERNAME="$1"
+if [ "${AVTX_USERNAME}" == "" ]; then
+    echo "Usage: $0 [username]"
+    exit 1
+fi
+
 sudo apt-get update
+sudo apt --yes install python-pip
+sudo pip install awscli
 
 # terraform
 which terraform > /dev/null 2>&1
@@ -40,7 +50,33 @@ fi
 
 source ${TOP}/scripts/install-prereq-go.sh
 
-# accept license agreement in aws marketplace
-echo Please accept the license agreement before continuing.  Press enter if complete.
-echo https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
+# NOTE: use tee to allow sudo access to file
+#echo GOROOT=$GOROOT | sudo tee /etc/profile.d/300-aviatrix-demo.sh
+echo GOPATH=$GOPATH | sudo tee /etc/profile.d/300-aviatrix-demo.sh
+
+# ssh client timeout
+grep ClientAliveInterval /etc/ssh/sshd_config > /dev/null
+if [ $? -ne 0 ]; then
+    echo ClientAliveInterval 120 | sudo tee -a /etc/ssh/sshd_config
+    echo ClientAliveCountMax 720 | sudo tee -a /etc/ssh/sshd_config
+fi
+
+# ssh user
+if [ -f ${TOP}/data/ssh-public-keys/${AVTX_USERNAME}.pub ]; then
+    cat ${TOP}/data/ssh-public-keys/${AVTX_USERNAME}.pub >> ~/.ssh/authorized_keys
+fi
+
+# hostname
+AVTX_HOST=demo.${AVTX_USERNAME}.aviatrix.live
+if [ "$(hostname)" != "${AVTX_HOST}" ]; then
+    sudo hostname ${AVTX_HOST}
+    echo ${AVTX_HOST} | sudo tee /etc/hostname
+    sudo sed -i -e 's/127.0.0.1 localhost/127.0.0.1 localhost ${AVTX_HOST}/g' /etc/hosts
+fi
+
+# cron job - cleanup demo environment
+crontab -l > cron.txt 2> /dev/null
+echo "*/10 * * * * /home/ubuntu/aviatrix-demo/scripts/cron-auto-cleanup.sh" >> cron.txt
+crontab cron.txt
+rm -f cron.txt
 
