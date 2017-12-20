@@ -62,8 +62,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # ssh user
-if [ -f ${TOP}/data/ssh-public-keys/${AVTX_USERNAME}.pub ]; then
-    cat ${TOP}/data/ssh-public-keys/${AVTX_USERNAME}.pub >> ~/.ssh/authorized_keys
+if [ -f ${TOP}/initialize/ssh-public-keys/${AVTX_USERNAME}.pub ]; then
+    cat ${TOP}/initialize/ssh-public-keys/${AVTX_USERNAME}.pub >> ~/.ssh/authorized_keys
 fi
 
 # hostname
