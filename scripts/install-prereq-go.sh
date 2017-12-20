@@ -25,14 +25,19 @@ go get github.com/ajg/form
 go get github.com/davecgh/go-spew/spew
 go get github.com/AviatrixSystems/go-aviatrix/goaviatrix
 go get github.com/google/go-querystring/query
+go get github.com/hashicorp/terraform/plugin
 
 # go - terraform aviatrix provider
 # go get github.com/terraform-providers/terraform-provider-aviatrix
-go get github.com/AviatrixSystems/terraform-provider-aviatrix
-pushd $GOPATH/src/github.com/AviatrixSystems/terraform-provider-aviatrix/bin/terraform-provider-aviatrix/
-sed -i -e 's/terraform-providers/AviatrixSystems/' main.go
-go install
-popd
+if [ ! -d $GOPATH/src/github.com/AviatrixSystems/terraform-provider-aviatrix ]; then
+    pushd $GOPATH/src/github.com/AviatrixSystems
+    git clone https://github.com/AviatrixSystems/terraform-provider-aviatrix.git
+    popd
+    pushd $GOPATH/src/github.com/AviatrixSystems/terraform-provider-aviatrix
+    sed -i -e 's/terraform-providers/AviatrixSystems/' main.go
+    GOPATH=$GOPATH go install
+    popd
+fi
 
 # update the provider
 if [ ! -f ~/.terraformrc ]; then
