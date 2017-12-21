@@ -18,6 +18,8 @@ fi
 sudo apt-get update
 sudo apt --yes install python-pip
 sudo pip install awscli
+# for lockfile
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install procmail
 
 # terraform
 which terraform > /dev/null 2>&1
@@ -81,7 +83,7 @@ crontab cron.txt
 rm -f cron.txt
 
 # update MOTD
-sudo tee /etc/update-motd.d/10-aviatrix-demo-text > /dev/null <<EOF
+sudo tee /etc/update-motd.d/10-aviatrix-demo-text > /dev/null <<"EOF"
 #!/bin/bash
 
 printf "\n"
@@ -89,11 +91,16 @@ printf "****************************** AVIATRIX DEMO ***************************
 if [ -f /home/ubuntu/aviatrix-demo/demo.running ]; then
     CONTROLLER=${HOSTNAME/demo/controller}
     printf "RUNNING -- https://${CONTROLLER}\n\n"
+
+    printf "Add the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/add-eng-request.sh\n"
+    printf "Remove the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/destroy-eng-request.sh\n"
+    printf "Destroy entire environment:\n\t\tcd ~/aviatrix-demo && ./scripts/destroy-all.sh\n"
+elif [ ! -f /home/ubuntu/aviatrix-demo/shared/init.tf ]; then
+     printf "Configure your environment by creating /home/ubuntu/aviatrix-demo/shared/init.tf\n"
+
 else
     printf "Setup your demo environment:\n\t\tcd ~/aviatrix-demo && ./scripts/build-demo.sh\n"
 fi
-printf "Add the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/add-eng-request.sh\n"
-printf "Remove the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/destroy-eng-request.sh\n"
 printf "\n***********************************************************************************\n"
 EOF
 sudo chmod +x /etc/update-motd.d/10-aviatrix-demo-text

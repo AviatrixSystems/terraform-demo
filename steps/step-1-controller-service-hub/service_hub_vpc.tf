@@ -108,6 +108,7 @@ resource "aws_cloudformation_stack" "controller_quickstart" {
     depends_on = [ "aws_vpc.service_hub",
         "aws_subnet.public_net_service_hub",
         "aws_key_pair.demo_key",
+        "aws_internet_gateway.igw_service_hub",
         "aws_s3_bucket_object.quickstart" ]
 }
 
