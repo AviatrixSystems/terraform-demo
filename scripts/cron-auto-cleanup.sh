@@ -24,11 +24,16 @@ if [ ${diff} -gt ${max_run_time} ]; then
     ${TOP}/scripts/destroy-all.sh > ${TOP}/logs/destroy-all.log 2>&1
     rtn=$?
     if [ $rtn -ne 0 ]; then
-        curl -s --user 'api:key-af33146f1b7bbda4e72993549946698e' \
-             https://api.mailgun.net/v3/mailgun.aviatrix.live/messages \
-             -F from='Aviatrix Demo Destroyer <mike@aviatrix.com>' \
-             -F to=mike@aviatrix.com \
-             -F subject='Failed to destroy environment' \
-             -F text="hostname = $(hostname)"
+        if [ $rtn -ne 5 ]; then # locked if exit value is 5
+            curl -s --user 'api:key-af33146f1b7bbda4e72993549946698e' \
+                 https://api.mailgun.net/v3/mailgun.aviatrix.live/messages \
+                 -F from='Aviatrix Demo Destroyer <mike@aviatrix.com>' \
+                 -F to=mike@aviatrix.com \
+                 -F subject='Failed to destroy environment' \
+                 -F text="hostname = $(hostname)"
+            rm -f ${TOP}/demo.running
+        fi
+    else
+        rm -f ${TOP}/demo.running
     fi
 fi

@@ -80,3 +80,21 @@ echo "*/10 * * * * /home/ubuntu/aviatrix-demo/scripts/cron-auto-cleanup.sh" >> c
 crontab cron.txt
 rm -f cron.txt
 
+# update MOTD
+sudo tee /etc/update-motd.d/10-aviatrix-demo-text > /dev/null <<EOF
+#!/bin/bash
+
+printf "\n"
+printf "****************************** AVIATRIX DEMO **************************************\n\n"
+if [ -f /home/ubuntu/aviatrix-demo/demo.running ]; then
+    CONTROLLER=${HOSTNAME/demo/controller}
+    printf "RUNNING -- https://${CONTROLLER}\n\n"
+else
+    printf "Setup your demo environment:\n\t\tcd ~/aviatrix-demo && ./scripts/build-demo.sh\n"
+fi
+printf "Add the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/add-eng-request.sh\n"
+printf "Remove the engineering request VPCs:\n\t\tcd ~/aviatrix-demo && ./scripts/destroy-eng-request.sh\n"
+printf "\n***********************************************************************************\n"
+EOF
+sudo chmod +x /etc/update-motd.d/10-aviatrix-demo-text
+sudo rm -f /etc/update-motd.d/90-updates-available /etc/update-motd.d/91-release-upgrade /etc/update-motd.d/10-help-text /etc/update-motd.d/51-cloudguest
