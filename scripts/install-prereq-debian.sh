@@ -105,3 +105,5 @@ printf "\n**********************************************************************
 EOF
 sudo chmod +x /etc/update-motd.d/10-aviatrix-demo-text
 sudo rm -f /etc/update-motd.d/90-updates-available /etc/update-motd.d/91-release-upgrade /etc/update-motd.d/10-help-text /etc/update-motd.d/51-cloudguest
+
+sudo ln -s /etc/update-motd.d/10-aviatrix-demo-text /bin/aviatrix-demo
