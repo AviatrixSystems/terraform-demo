@@ -34,7 +34,6 @@ data "aws_subnet" "transit_vpc_subnet" {
     }
 }
 
-
 data "aws_route_table" "transit" {
     provider = "aws.transit"
     subnet_id = "${data.aws_subnet.transit_vpc_subnet.id}"
@@ -62,6 +61,7 @@ data "aws_subnet" "spoke_vpc_subnet" {
     tags {
         "Name" = "public_net_${module.spoke-1.spoke_name}"
     }
+    depends_on = [ "module.spoke-1" ]
 }
 
 // TODO: remove hard coded ami id
@@ -74,7 +74,7 @@ resource "aws_instance" "debug_in_spoke" {
     tags {
         "Name" = "webapp-1"
     }
-    depends_on = [ "data.aws_subnet.spoke_vpc_subnet" ]
+    depends_on = [ "data.aws_subnet.spoke_vpc_subnet", "module.spoke-1" ]
 }
 
 resource "aws_security_group" "for_web" {
