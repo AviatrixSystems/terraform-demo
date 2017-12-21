@@ -71,7 +71,7 @@ AVTX_HOST=demo.${AVTX_USERNAME}.aviatrix.live
 if [ "$(hostname)" != "${AVTX_HOST}" ]; then
     sudo hostname ${AVTX_HOST}
     echo ${AVTX_HOST} | sudo tee /etc/hostname
-    sudo sed -i -e 's/127.0.0.1 localhost/127.0.0.1 localhost ${AVTX_HOST}/g' /etc/hosts
+    sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 localhost ${AVTX_HOST}/g" /etc/hosts
 fi
 
 # cron job - cleanup demo environment
