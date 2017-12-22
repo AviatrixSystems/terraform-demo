@@ -30,7 +30,7 @@ module "spoke-2" {
 
 module "spoke-3" {
     source = "../../modules/spoke"
-    spoke_name = "sample-app-dev-mike"
+    spoke_name = "sample-app-dev"
     spoke_cidr_block = "172.16.32.0/20"
     spoke_public_net_cidr_block = "172.16.33.0/28"
     spoke_controller_account = "${data.aviatrix_account.controller_demo.account_name}"
