@@ -4,3 +4,4 @@ terraform.tfstate*
 avtx.vars
 *output.log
 data
+shared/init.tf

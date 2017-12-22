@@ -21,7 +21,8 @@ diff=$(( ${now} - ${demo_created} ))
 max_run_time=$(( 8 * 3600 ))
 echo "diference is ${diff}s (maximum run time is ${max_run_time}s)"
 if [ ${diff} -gt ${max_run_time} ]; then
-    ${TOP}/scripts/destroy-all.sh > ${TOP}/logs/destroy-all.log 2>&1
+    OUTPUT=${TOP}/logs/destroy-all.$(date +%Y%m%d.%H%M).log
+    ${TOP}/scripts/destroy-all.sh > ${OUTPUT} 2>&1
     rtn=$?
     if [ $rtn -ne 0 ]; then
         if [ $rtn -ne 5 ]; then # locked if exit value is 5
@@ -31,9 +32,16 @@ if [ ${diff} -gt ${max_run_time} ]; then
                  -F to=mike@aviatrix.com \
                  -F subject='Failed to destroy environment' \
                  -F text="hostname = $(hostname)"
-            rm -f ${TOP}/demo.running
+            # keep the log file around so we can look at it later
+            # keep demo.running around so we can try again
+        else
+            # delete the output file since it should just contain a note
+            # about the file being locked
+            rm -f ${OUTPUT}
         fi
     else
         rm -f ${TOP}/demo.running
+        # move the output file to a "success" log file
+        mv ${OUTPUT} ${TOP}/logs/destroy-all.log
     fi
 fi
