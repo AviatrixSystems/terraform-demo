@@ -5,3 +5,4 @@ avtx.vars
 *output.log
 data
 shared/init.tf
+shared/init.*.tf
