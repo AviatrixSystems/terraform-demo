@@ -9,7 +9,7 @@
 # the creation time of that file before destroying it.
 #-------------------------------------------------------------------------
 
-TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+TOP="$( cd "$(dirname $(readlink -f $0))/.." ; pwd -P )"
 
 # if the demo is not running then we don't need to tear it down
 if [ ! -f ${TOP}/demo.running ]; then

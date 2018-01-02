@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Cleans up all parts of the Aviatrix demo environment
 #-----------------------------------------------------------------------------
-TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+TOP="$( cd "$(dirname $(readlink -f $0))/.." ; pwd -P )"
 source ${TOP}/scripts/common.sh
 cd ${TOP}
 

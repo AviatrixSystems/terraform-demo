@@ -2,12 +2,12 @@
 
 #-----------------------------------------------------------------------------
 # Common functions and variables used by aviatrix-demo scripts
+# TOP must be defined by the caller of this script (or source)
 #-----------------------------------------------------------------------------
 
 export CONTROLLER=${HOSTNAME/demo/controller}
 export DEMO_RUNNER=${HOSTNAME}
 export DEMOUSER=$(echo $HOSTNAME | awk -F. '{ print $2 }')
-TOP="$( cd "$(dirname "$0")/.." || cd .; pwd -P )"
 export DEMORUNNINGFILE=${TOP}/demo.running
 export MAILGUN_API_KEY="api:key-af33146f1b7bbda4e72993549946698e"
 

@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Adds the "engineering request"
 #-----------------------------------------------------------------------------
-TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+TOP="$( cd "$(dirname $(readlink -f $0))/.." ; pwd -P )"
 
 STEP=step-6-engineering
 LOG=${TOP}/logs/${STEP}.apply.output.log

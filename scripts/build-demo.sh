@@ -27,7 +27,7 @@
 #   - peer with transit and services
 #-----------------------------------------------------------------------------
 
-TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+TOP="$( cd "$(dirname $(readlink -f $0))/.." ; pwd -P )"
 source ${TOP}/scripts/common.sh
 
 if is_demo_running; then

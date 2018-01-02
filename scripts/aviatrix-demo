@@ -6,7 +6,7 @@
 # where the demo is controlled from.
 #-----------------------------------------------------------------------------
 
-TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+TOP="$( cd "$(dirname $(readlink -f $0))/.." ; pwd -P )"
 source ${TOP}/scripts/common.sh
 
 IS_RUNNING=0
@@ -89,7 +89,7 @@ case $COMMAND in
             printf "Configure your environment by creating ${TOP}/shared/init.tf\n"
 
         else
-            printf "Setup your demo environment: $0 build\n"
+            printf "Setup your demo environment:\n\t$0 build\n"
         fi
         ;;
 esac
