@@ -126,7 +126,7 @@ resource "aws_route53_record" "runner" {
 
 resource "null_resource" "ssh_and_prep" {
     provisioner "local-exec" {
-        command = "sleep 10; ssh -o StrictHostKeyChecking=no -i ${local.key_file_path} ubuntu@${aws_eip.runner.public_ip} 'git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh ${var.username}'"
+        command = "sleep 10; ssh -o StrictHostKeyChecking=no -i ${local.key_file_path} ubuntu@${aws_eip.runner.public_ip} 'git clone https://github.com/AviatrixSystems/terraform-demo.git && cd aviatrix-demo && scripts/install-prereq-debian.sh ${var.username}'"
     }
     depends_on = [ "aws_instance.runner" ]
 }
