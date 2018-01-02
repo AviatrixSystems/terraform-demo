@@ -1,8 +1,9 @@
 #!/bin/bash
 #-----------------------------------------------------------------------------
-# Cleans up all parts of the Aviatrix demo environment in multiple steps.
+# Cleans up all parts of the Aviatrix demo environment
 #-----------------------------------------------------------------------------
 TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+source ${TOP}/scripts/common.sh
 cd ${TOP}
 
 # only one instance of this script should run at a time
@@ -24,5 +25,7 @@ for STEP in ${STEPS}; do
     fi
     popd
 done
-rm -f ${LOCKFILE}
+rm -f ${LOCKFILE} ${DEMORUNNINGFILE}
+send_demo_destroyed_email
+
 exit 0

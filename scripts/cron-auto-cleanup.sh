@@ -11,6 +11,7 @@
 
 TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
 
+# if the demo is not running then we don't need to tear it down
 if [ ! -f ${TOP}/demo.running ]; then
     exit 0
 fi
@@ -19,7 +20,7 @@ now=$(date +%s)
 demo_created=$(date -r ${TOP}/demo.running +%s)
 diff=$(( ${now} - ${demo_created} ))
 max_run_time=$(( 8 * 3600 ))
-echo "diference is ${diff}s (maximum run time is ${max_run_time}s)"
+
 if [ ${diff} -gt ${max_run_time} ]; then
     OUTPUT=${TOP}/logs/destroy-all.$(date +%Y%m%d.%H%M).log
     ${TOP}/scripts/destroy-all.sh > ${OUTPUT} 2>&1

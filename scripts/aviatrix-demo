@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#-----------------------------------------------------------------------------
+# This script is meant to be the main script for the aviatrix demo
+# environment.  It should be run from the demo runner instance on EC2
+# where the demo is controlled from.
+#-----------------------------------------------------------------------------
+
+TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+source ${TOP}/scripts/common.sh
+
+IS_RUNNING=0
+if [ -f ${TOP}/demo.running ]; then
+    IS_RUNNING=1
+fi
+
+printf "\n"
+printf "****************************** AVIATRIX DEMO **************************************\n\n"
+if [ $IS_RUNNING -eq 1 ]; then
+    demo_created=$(date -r ${TOP}/demo.running +%s)
+    destroy_demo_at=$(( $demo_created + (8*3600) ))
+    now=$(date +%s)
+    remaining=$(( $destroy_demo_at - $now ))
+    CONTROLLER=${HOSTNAME/demo/controller}
+    printf "DEMO IS RUNNING -- https://${CONTROLLER}\n"
+    printf "ENVIRONMENT WILL BE AUTOMATICALLY DESTROYED in $(human_readable_time ${remaining})\n\n"
+fi
+
+FORCE=0
+if [ "$2" == "--force" ]; then
+    FORCE=1
+fi
+
+COMMAND="$1"
+case $COMMAND in
+    build)
+        if [ $FORCE -eq 0 -a $IS_RUNNING -eq 1 ]; then
+            echo Demo environment is already running
+        else
+            cd ~/aviatrix-demo && ./scripts/build-demo.sh
+        fi
+        ;;
+
+    destroy)
+        if [ $FORCE -eq 1 -o $IS_RUNNING -eq 1 ]; then
+            cd ~/aviatrix-demo && ./scripts/destroy-all.sh
+        else
+            echo Demo environment is not running
+        fi
+        ;;
+
+    keep)
+        if [ $IS_RUNNING -eq 1 ]; then
+            touch ${TOP}/demo.running
+        fi
+        ;;
+
+    add-request-manual)
+        if [ $FORCE -eq 1 -o $IS_RUNNING -eq 1 ]; then
+            VARS=${TOP}/shared/aviatrix-admin-password.tfvars
+            /bin/echo -e "run these commands:\n\ncd ~/aviatrix-demo/steps/step-6-engineering\nterraform apply -auto-approve -parallelism=1 -var-file=${VARS}"
+        else
+            echo Demo environment is not running
+        fi
+        ;;
+
+    add-request)
+        if [ $FORCE -eq 1 -o $IS_RUNNING -eq 1 ]; then
+            cd ~/aviatrix-demo && /bin/bash -v ./scripts/add-eng-request.sh
+        else
+            echo Demo environment is not running
+        fi
+        ;;
+
+    destroy-request)
+        if [ $FORCE -eq 1 -o $IS_RUNNING -eq 1 ]; then
+            cd ~/aviatrix-demo && /bin/bash -v ./scripts/destroy-eng-request.sh
+        else
+            echo Demo environment is not running
+        fi
+        ;;
+
+    *)
+        if [ $IS_RUNNING -eq 1 ]; then
+            printf "Add the engineering request VPC:\n\t$0 add-request\n"
+            printf "Remove the engineering request VPC:\n\t$0 destroy-request\n"
+            printf "Destroy entire environment:\n\t$0 destroy\n"
+        elif [ ! -f ${TOP}/shared/init.tf ]; then
+            printf "Configure your environment by creating ${TOP}/shared/init.tf\n"
+
+        else
+            printf "Setup your demo environment: $0 build\n"
+        fi
+        ;;
+esac
+printf "\n***********************************************************************************\n\n"

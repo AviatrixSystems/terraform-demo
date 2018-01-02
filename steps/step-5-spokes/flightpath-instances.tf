@@ -65,7 +65,7 @@ data "aws_subnet" "spoke_vpc_subnet" {
 }
 
 // TODO: remove hard coded ami id
-resource "aws_instance" "debug_in_spoke" {
+resource "aws_instance" "web_server" {
     provider = "aws.spoke"
     ami = "ami-55ef662f"
     instance_type = "t2.micro"
@@ -74,14 +74,17 @@ resource "aws_instance" "debug_in_spoke" {
     tags {
         "Name" = "webapp-1"
     }
-    depends_on = [ "data.aws_subnet.spoke_vpc_subnet", "module.spoke-1" ]
+    vpc_security_group_ids = [ "${aws_security_group.for_web.id}" ]
+    depends_on = [ "data.aws_subnet.spoke_vpc_subnet",
+        "aws_security_group.for_web",
+        "module.spoke-1" ]
 }
 
 resource "aws_security_group" "for_web" {
-    provider = "aws.onprem"
+    provider = "aws.spoke"
     name        = "web_application_servers"
     description = "Allow web application servers to talk to database"
-    vpc_id      = "${data.aws_vpc.onprem.id}"
+    vpc_id      = "${module.spoke-1.spoke_vpc_id}"
 
     ingress {
         from_port   = 80
@@ -98,10 +101,10 @@ resource "aws_security_group" "for_web" {
     }
 
     egress {
-        from_port       = 0
-        to_port         = 0
-        protocol        = "-1"
-        cidr_blocks     = ["0.0.0.0/0"]
+        from_port       = 3306
+        to_port         = 3306
+        protocol        = "tcp"
+        cidr_blocks     = ["10.0.0.0/16"]
     }
 }
 
@@ -117,16 +120,9 @@ resource "aws_security_group" "for_db" {
         protocol    = "tcp"
         cidr_blocks = ["192.168.0.0/16"]
     }
-
-    egress {
-        from_port       = 0
-        to_port         = 0
-        protocol        = "-1"
-        cidr_blocks     = ["0.0.0.0/0"]
-    }
 }
 
-resource "aws_instance" "debug_in_onprem" {
+resource "aws_instance" "db_server" {
     provider = "aws.onprem"
     ami = "ami-a51f27c5"
     instance_type = "t2.micro"

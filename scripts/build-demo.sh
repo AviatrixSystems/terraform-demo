@@ -28,54 +28,15 @@
 #-----------------------------------------------------------------------------
 
 TOP="$( cd "$(dirname "$0")/.." ; pwd -P )"
+source ${TOP}/scripts/common.sh
 
-# check that the dependencies are installed
-which terraform > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo Please install terraform and dependencies before continuing
-    exit 1
+if is_demo_running; then
+    # grab the latest (only do this after completely destroyed)
+    cd ${TOP} && git pull
 fi
 
 # grab the password
 PASSWORD=$(grep "aviatrix_password = " ${TOP}/shared/init.tf | awk '{ print $3 }' | sed -e 's/"//g')
-
-
-#-----------------------------------------------------------------------------
-# function waitForControllerUp
-# waits until the controller IP is accessible via a curl request (i.e., a
-# successsful login request)
-# Arguments:
-#   $1 - publicIp - the public ip address of the controller
-#   $2 - password - the password for the user "admin" to the controller
-# Returns:
-#   0 when successful; 1 if controller is not accessible after 10 tries
-#-----------------------------------------------------------------------------
-function waitForControllerUp() {
-    publicIp="$1"
-    password="$2"
-    tries=1
-    success=0
-    while [ $tries -lt 10 -a $success -eq 0 ]; do
-        echo "[Aviatrix Controller] Attempt $tries ..."
-        output=$(curl -k "https://$publicIp/v1/api?action=login&username=admin&password=$password" 2>/dev/null)
-        if [ $? -eq 0 ]; then
-            echo "    output: $output"
-            echo "$output" | grep "authorized successfully" > /dev/null 2>&1
-            if [ $? -eq 0 ]; then
-                success=1
-            fi
-        else
-            echo "    output: $output"
-            sleep 10
-        fi
-        tries=$((tries + 1))
-    done
-    if [ $success -eq 0 ]; then
-        echo "Unable to connect to controller on https://$publicIp using admin:$password"
-        return 2
-    fi
-    return 0
-}
 
 #-----------------------------------------------------------------------------
 # Applies a single step.
@@ -112,6 +73,7 @@ function applyStep() {
     fi
 }
 
+
 # init/validate all steps
 cd ${TOP}
 for step in $(ls -d steps/step-*); do
@@ -137,10 +99,10 @@ if [ "$publicIp" == "" ]; then
 fi
 
 # wait for the controller to be accessible
-waitForControllerUp "$publicIp" "$privateIp"
+wait_for_controller_up "$publicIp" "$privateIp"
 rtn=$?
 if [ $rtn -eq 2 ]; then
-    waitForControllerUp "$publicIp" "$PASSWORD"
+    wait_for_controller_up "$publicIp" "$PASSWORD"
     rtn=$?
     current_password="$PASSWORD"
 else
@@ -164,4 +126,7 @@ done
 
 current_password=$(grep "aviatrix_current_password = " ${VARS} | awk '{ print $3 }' | sed -e 's/"//g')
 echo "Complete. Public IP is $publicIp.  Controller accessible at https://$publicIp.  Login as admin with password '${current_password}'."
-touch ${TOP}/demo.running
+touch ${DEMORUNNINGFILE}
+send_demo_ready_email "$current_password"
+
+
