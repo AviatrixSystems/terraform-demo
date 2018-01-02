@@ -136,5 +136,5 @@ function send_demo_ready_email() {
          -F from='Aviatrix Demo <mike@aviatrix.com>' \
          -F to=${DEMOUSER}@aviatrix.com \
          -F subject='[AVIATRIX DEMO] Your demo environment is ready' \
-         -F html="${DEMOUSER} -<br><br>Your demo environment is ready at https://${CONTROLLER}.<br><br>You can login with username <b>admin</b> and password <b>${current_password}</b>.<br><br>Please remember it will be automatically destroyed in 8 hours.<br>"
+         -F html="${DEMOUSER} -<br><br>Your demo environment is ready at https://${CONTROLLER}.<br><br>You can login with username <b>admin</b> and password <b>${current_password}</b>.<br><br>If you would like to make any changes, please SSH (with Putty on Windows or via Terminal on Mac) to ${DEMO_RUNNER} with username ubuntu.<br><br>Please remember this demo environment will be automatically destroyed in 8 hours.<br>"
 }
