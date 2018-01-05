@@ -15,9 +15,9 @@ This includes:
 - [x] 1 Transit Hub VPC + Aviatrix Gateway
 - [x] 1 "On Premise" Network + Aviatrix Gateway (simulated with a VPC in Canada)
 - [x] 3 spoke VPCs + Aviatrix Gateways
--     [x] sample-app-prod
--     [x] sample-app-dev
--     [x] sample-app-staging
+      - [x] sample-app-prod
+      - [x] sample-app-dev
+      - [x] sample-app-staging
 - [x] Peering from all spokes to transit
 - [x] Peering between transit and "On Premise"
 - [x] Transitive peering from spokes through transit to on-premise
@@ -40,7 +40,7 @@ The demo should be kept in a separate account from your primary account.
 - Accept the Aviatrix license terms in the AWS marketplace in new account
   https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
 
-# Initialiize the Source Tree
+# Initialize the Source Tree
 - Clone the repo
   ```
   git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git
