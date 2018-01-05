@@ -1,8 +1,8 @@
 How to SSH to your demo control instance
 ----------------------------------------
 * On Mac:
-  1. open Terminal app (command + space, type Terminal and hit enter)
-  2. run: 
+1. open Terminal app (command + space, type Terminal and hit enter)
+2. run: 
      ```ssh ubuntu@demo.<your username here>.aviatrix.live```
 
 * On Windows:
