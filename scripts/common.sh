@@ -118,7 +118,7 @@ function send_demo_destroyed_email() {
          -F from='Aviatrix Demo <mike@aviatrix.com>' \
          -F to=${DEMOUSER}@aviatrix.com \
          -F subject='[AVIATRIX DEMO] Your demo environment has been destroyed' \
-         -F html="${DEMOUSER} -<br><br>Your demo environment has been destroyed.  Login (via SSH) to ${DEMO_RUNNER} and run 'aviatrix-demo build' to rebuild it."
+         -F html="${DEMOUSER} -<br><br>Your demo environment has been destroyed.  Login (via SSH) to ${DEMO_RUNNER} and run <pre>aviatrix-demo build</pre> to rebuild it."
 }
 
 #-----------------------------------------------------------------------------
@@ -136,5 +136,5 @@ function send_demo_ready_email() {
          -F from='Aviatrix Demo <mike@aviatrix.com>' \
          -F to=${DEMOUSER}@aviatrix.com \
          -F subject='[AVIATRIX DEMO] Your demo environment is ready' \
-         -F html="${DEMOUSER} -<br><br>Your demo environment is ready at https://${CONTROLLER}.<br><br>You can login with username <b>admin</b> and password <b>${current_password}</b>.<br><br>If you would like to make any changes, please SSH (with Putty on Windows or via Terminal on Mac) to ${DEMO_RUNNER} with username ubuntu.<br><br>Please remember this demo environment will be automatically destroyed in 8 hours.<br>"
+         -F html="${DEMOUSER} -<br><br>Your demo environment is ready at https://${CONTROLLER}.<br><br>You can login with username <b>admin</b> and password <b>${current_password}</b>.<br><br>If you would like to make any changes, please SSH (with Putty on Windows or Terminal on Mac) to ${DEMO_RUNNER} with username ubuntu.<br><br>Please remember this demo environment will be automatically destroyed in 8 hours.<br>"
 }
