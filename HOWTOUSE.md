@@ -39,6 +39,19 @@ To build your demo:
    username: *admin*
    password: *P@ssw0rd!*
 
+Things to show during a demo
+----------------------------
+- Everything is built with terraform.  You can show one of the configuration files if the audience is technical and interested in seeing how they would use terraform to build a gateway and tunnel.  The best one to show is :
+
+[Build the On-Premise Gateway and Tunnel to Transit](https://github.com/AviatrixSystems/terraform-demo/blob/master/steps/step-4-on-premise/on_premise_vpc.tf)
+
+This builds up a VPC and all the AWS components needed from scratch.  Then, at the bottom of the file, you will see the Aviatrix Gateway and tunnel components being built.
+
+We use a module to build each spoke and the tunnel to the transit VPC.  That module can be seen here:
+
+[Module to build spoke + Gateway + Tunnel](https://github.com/AviatrixSystems/terraform-demo/blob/master/modules/spoke/spoke_vpc.tf)
+
+
 
 Demonstrate adding a new gateway and tunnels (live)
 ---------------------------------------------------
