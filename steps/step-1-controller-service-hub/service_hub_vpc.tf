@@ -101,7 +101,7 @@ resource "aws_cloudformation_stack" "controller_quickstart" {
         VPCParam = "${aws_vpc.service_hub.id}"
         SubnetParam = "${aws_subnet.public_net_service_hub.id}"
         KeyNameParam = "aviatrix-demo"
-        IAMRoleParam = "no"
+        IAMRoleParam = "New"
         InstanceTypeParam = "t2.large"
     }
     capabilities = [ "CAPABILITY_NAMED_IAM" ] /* to allow roles to be created */
