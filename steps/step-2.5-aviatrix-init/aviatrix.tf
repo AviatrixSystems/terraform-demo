@@ -25,7 +25,7 @@ resource "aviatrix_account" "controller_demo" {
     cloud_type = "1"
     aws_account_number = "${data.aws_caller_identity.current.account_id}"
     aws_iam = "true"
-    aws_role_arn = "${data.aws_cloudformation_stack.controller_quickstart.outputs["AviatrixRoleAppARN"]}"
+    aws_role_app = "${data.aws_cloudformation_stack.controller_quickstart.outputs["AviatrixRoleAppARN"]}"
     aws_role_ec2 = "${data.aws_cloudformation_stack.controller_quickstart.outputs["AviatrixRoleEC2ARN"]}"
     depends_on = [ "data.aws_caller_identity.current",
         "data.aws_cloudformation_stack.controller_quickstart" ]

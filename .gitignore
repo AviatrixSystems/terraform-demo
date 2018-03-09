@@ -6,3 +6,4 @@ avtx.vars
 data
 shared/init.tf
 shared/init.*.tf
+initialize/init.tf

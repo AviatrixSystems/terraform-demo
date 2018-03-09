@@ -41,10 +41,7 @@ The demo should be kept in a separate account from your primary account.
   https://aws.amazon.com/marketplace/pp?sku=zemc6exdso42eps9ki88l9za
 
 # Initialize the Source Tree
-- Clone the repo
-  ```
-  git clone https://github.com/mike-r-mclaughlin/aviatrix-demo.git
-  ```
+- Clone this repo
 
 - Create aviatrix-demo/shared/init.tf
   ```
