@@ -35,6 +35,15 @@ locals {
     aviatrix_controller_private_ip = "${data.aws_cloudformation_stack.controller_quickstart.outputs["AviatrixControllerPrivateIP"]}"
 }
 
+/* controller instance */
+data "aws_instance" "controller" {
+    provider = "aws.services"
+    filter {
+        name = "network-interface.association.public-ip"
+        values = [ "${data.aws_cloudformation_stack.controller_quickstart.outputs["AviatrixControllerEIP"]}" ]
+    }
+}
+
 /* aviatrix provider */
 provider "aviatrix" {
     alias = "demo"

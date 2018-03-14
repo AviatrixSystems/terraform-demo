@@ -38,3 +38,12 @@ resource "aviatrix_gateway" "services_hub" {
         "data.aws_subnet.public_net_service_hub",
         "data.aviatrix_account.controller_demo" ]
 }
+
+# remove the termination protection on the controller so the destroy will work
+resource "null_resource" "disable_termination_protection" {
+    provisioner "local-exec" {
+        command = "export AWS_ACCESS_KEY_ID=${local.aws_access_key}; export AWS_SECRET_ACCESS_KEY=${local.aws_secret_key}; aws --region ${data.aws_region.services.name} ec2 modify-instance-attribute --no-disable-api-termination --instance-id ${data.aws_instance.controller.id}"
+        when = "destroy"
+    }
+}
+
