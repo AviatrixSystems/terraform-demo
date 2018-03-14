@@ -83,7 +83,7 @@ done
 
 # grab latest cloudformation script
 mkdir -p ${TOP}/data
-curl -o ${TOP}/data/aviatrix-aws-quickstart.json https://raw.githubusercontent.com/AviatrixSystems/AWSQuickStart/master/aviatrix-aws-quickstart.json 2>/dev/null
+curl -o ${TOP}/data/aviatrix-aws-quickstart.json https://raw.githubusercontent.com/AviatrixSystems/AWSQuickStart/master/avx-awsmp-BYOL.template 2>/dev/null
 
 # step 1
 applyStep step-1-controller-service-hub
